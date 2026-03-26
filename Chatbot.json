@@ -1,0 +1,240 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "mode": "webhook",
+        "availableInChat": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5586e79a-dfca-4376-8f2d-2724d1f167b5",
+      "name": "When chat message received",
+      "webhookId": "5047550c-a28d-47fe-8bf7-befea7de243b"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an AI assistant for a demo website.\n\nYour role is to help customers by answering questions using the provided FAQ knowledge base.\n\n-----------------------------------\nGENERAL RULES\n-----------------------------------\n1. Answer only using the FAQ knowledge base.\n2. Do NOT invent or guess answers.\n3. Keep answers short, clear, and easy to understand.\n4. Be polite, friendly, and professional.\n5. Stay focused only on website-related topics (account, orders, password, support, services).\n6. If the user greets you (hello, hi, etc.), respond warmly and ask how you can help.\n7. If the question is unclear, ask the user to rephrase it.\n8. If the user asks something unrelated, say:\n   \"I am here to help with questions about this website and its services.\"\n\n-----------------------------------\nFAQ ANSWERING RULES\n-----------------------------------\n1. If the user’s question matches or is similar to an FAQ:\n   - Provide the correct answer from the FAQ.\n   - Keep the response concise.\n2. Do not add extra or unnecessary information.\n3. Do not mention “FAQ” in your answer unless needed.\n\n-----------------------------------\nIF ANSWER IS NOT FOUND (IMPORTANT)\n-----------------------------------\nIf the answer is NOT available in the FAQ:\n\nStep 1:\nSay:\n\"Sorry, I could not find this information in our FAQ.\"\n\nStep 2:\nAsk:\n\"Please share your question and mobile number, and our team will contact you for further inquiry.\"\n\n-----------------------------------\nLEAD COLLECTION BEHAVIOR\n-----------------------------------\n1. If the user already asked a question:\n   - Do NOT ask them to repeat it.\n   - Only ask for their mobile number.\n\n2. If the user provides only a mobile number:\n   - Ask them to also share their question.\n\n3. If the user provides BOTH question and mobile number:\n   - Respond:\n     \"Thank you for sharing your details. We have recorded your question and mobile number. Our team will contact you for further inquiry.\"\n\n4. If the user provides question first and then mobile number later:\n   - Combine both and confirm as above.\n\n5. Never promise exact callback time unless specified.\n\n-----------------------------------\nSAFETY RULES\n-----------------------------------\n1. Do not respond to harmful, illegal, or inappropriate requests.\n2. Do not provide personal opinions.\n3. Do not pretend to be human.\n4. Do not provide false or misleading information.\n\n-----------------------------------\nRESPONSE STYLE\n-----------------------------------\n- Friendly\n- Simple\n- Professional\n- Maximum 1–3 short paragraphs\n- Avoid long explanations\n\n-----------------------------------\nWELCOME MESSAGE \n-----------------------------------\n\"Welcome! I am your AI website assistant. Ask me any question about the website, account, orders, or support.\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2e29ed15-bbc9-4e7d-bbbb-7d429dbbeb68",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "a073d106-7e4a-48ef-86a4-2a54f974dcd1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "6P5YkVEcjXBcJkcF",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 15
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        208
+      ],
+      "id": "9b7fc69c-69dd-45cf-b7c3-35e6836ecd2c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1mXcuVYXNZo10VgLWlpkY_pjAbZETQtPnV8CmTyf-U7Y",
+          "mode": "list",
+          "cachedResultName": "chatbot_QA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mXcuVYXNZo10VgLWlpkY_pjAbZETQtPnV8CmTyf-U7Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 674658138,
+          "mode": "list",
+          "cachedResultName": "Chatbot Q&A",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mXcuVYXNZo10VgLWlpkY_pjAbZETQtPnV8CmTyf-U7Y/edit#gid=674658138"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        208
+      ],
+      "id": "9f3058d4-175a-4c0e-83a3-67e44c26d27a",
+      "name": "FAQ",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "okUJ6Qn2ZtiXQeoQ",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1mXcuVYXNZo10VgLWlpkY_pjAbZETQtPnV8CmTyf-U7Y",
+          "mode": "list",
+          "cachedResultName": "chatbot_QA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mXcuVYXNZo10VgLWlpkY_pjAbZETQtPnV8CmTyf-U7Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2052461376,
+          "mode": "list",
+          "cachedResultName": "Unknown query",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1mXcuVYXNZo10VgLWlpkY_pjAbZETQtPnV8CmTyf-U7Y/edit#gid=2052461376"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Customers Question": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customers_Question', ``, 'string') }}",
+            "Mobile Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Mobile_Number', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Customers Question"
+          ],
+          "schema": [
+            {
+              "id": "Customers Question",
+              "displayName": "Customers Question",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Mobile Number",
+              "displayName": "Mobile Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        528,
+        192
+      ],
+      "id": "c7697622-e50a-45cd-9971-308a78d9fc4d",
+      "name": "Order",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "okUJ6Qn2ZtiXQeoQ",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FAQ": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2b4e66a8-a71a-4055-bcc9-be8e4e690491",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "4863c72eb1f84191ac5e8330bc9b556cd802f7addbd5ae6066035f26f6b7f34a"
+  },
+  "id": "6NNEP82kqU9jLaBi",
+  "tags": []
+}
